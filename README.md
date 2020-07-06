@@ -1,2 +1,2 @@
-# DataScienceandApplications
+# DataScienceAndApplications
 Some materials of a course.

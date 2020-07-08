@@ -1,0 +1,41 @@
+---
+title: "Watashinochapter3"
+author: "Diamond"
+date: "2020/7/8"
+output: html_document
+---
+
+###chapter 3 Visuation:ggplot2
+
+install first package, ggplot2, by installing tidyverse
+
+
+```{r setup, include=FALSE}
+#install.packages("tidyverse") #Just need to do once
+library(tidyverse) #when to need to use 
+
+```
+Test work place simply.
+```{r}
+
+getwd()
+```
+ 
+
+#1.Load data
+
+```{r}
+
+#National Parks in California
+ca <- read_csv("data/ca.csv")
+#Acadia National Park
+acadia <- read_csv("data/acadia.csv")
+#Southeast US National Parks
+se <- read_csv("data/se.csv")
+#2016 Visitation for all Pacific West National Parks
+visit_16 <- read_csv("data/visit_16.csv")
+#All Nationally designated sites in Massachusetts
+mass <- read_csv("data/mass.csv")
+
+
+```

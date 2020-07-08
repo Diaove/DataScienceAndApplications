@@ -1,0 +1,80 @@
+---
+title: "NoteDay3"
+author: "Diamond"
+date: "2020/7/8"
+output: 
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+
+# chapter 3 Visuation:ggplot2
+
+install first package, ggplot2, by installing tidyverse
+
+
+```{r setup, include=FALSE}
+
+
+#install.packages("tidyverse") #Just need to do once
+library(tidyverse) #when to need to use 
+library(MASS)
+
+
+```
+Test work place simply.
+```{r}
+
+getwd()
+```
+
+
+## 1.Load data
+
+```{r}
+
+#National Parks in California
+ca <- read_csv("data/ca.csv")
+#Acadia National Park
+acadia <- read_csv("data/acadia.csv")
+#Southeast US National Parks
+se <- read_csv("data/se.csv")
+#2016 Visitation for all Pacific West National Parks
+visit_16 <- read_csv("data/visit_16.csv")
+#All Nationally designated sites in Massachusetts
+mass <- read_csv("data/mass.csv")
+
+```
+
+## 2.A Grammar of Graphics!
+
+ggplot(data = \<DATA\>) +
+\<GEOM_FUNCTION\>(mapping = aes(\<MAPPINGS\>),stat = \<STAT\>,position = \<POSITION\>) +
+\<COORDINATE_FUNCTION\> +
+\<FACET_FUNCTION\>
+
+You can uniquely describe any plot as a combination of these 7 parameters.
+
+
+```{r}
+head(ca)
+#view(ca) other worksheet will come out
+```
+
+Among the variables in ca are:
+
+1. region, US region where park is located.
+
+2. visitors, the annual visitation for each year
+
+To build a ggplot, we need to:
+
+*use the ggplot() function and bind the plot to a specific data frame using the data argument*
+
+```{r}
+ggplot(data=ca)+
+  geom_point(aes(x = year, y = visitors))
+```
+Notation '+' must be the last  in the line (middle also OK)
+

@@ -3,9 +3,9 @@ title: "NoteDay3"
 author: "Diamond"
 date: "2020/7/8"
 output: 
-  html_document: default
   pdf_document:
     latex_engine: xelatex
+  html_document: default
 ---
 
 
@@ -56,6 +56,7 @@ ggplot(data = \<DATA\>) +
 
 You can uniquely describe any plot as a combination of these 7 parameters.
 
+### A simple style
 
 ```{r}
 head(ca)
@@ -77,4 +78,106 @@ ggplot(data=ca)+
   geom_point(aes(x = year, y = visitors))
 ```
 Notation '+' must be the last  in the line (middle also OK)
+
+
+### Change the style:
+```{r}
+ggplot(data = ca) +
+geom_point(aes(x = year, y = visitors, color = park_name))
+```
+
+Capitalize the x and y axis labels and add a main title to the figure. 
+
+Remove that standard gray background using a different theme.
+
+Many themes come built into the ggplot2 package.
+
+$theme\_bw()$ 
+
+Once you start typing theme_ a list of options will pop up. 
+
+The last thing to do is remove the legend title.
+
+```{r}
+ggplot(data = ca) +
+geom_point(aes(x = year, y = visitors, color = park_name)) +
+labs(x = "Year",
+y = "Visitation",
+title = "California National Park Visitation") +
+theme_bw() +
+theme(legend.title=element_blank())
+```
+### Faceting
+
+ggplot has a special technique called faceting that allows the user to split one plot into multiple plots based on data in the dataset.
+
+```{r}
+ggplot(data = se) +
+geom_point(aes(x = year, y = visitors)) +
+facet_wrap(~ state)
+```
+
+Style change:
+```{r}
+ggplot(data = se) +
+geom_point(aes(x = year, y = visitors, color = park_name)) +
+facet_wrap(~ state, scales = "free")
+#scales = "free" every figure's x-axis is different
+```
+
+### Geometric objects (geoms)
+
+A geom is the geometrical object that a plot uses to represent data. People often describe plots by the type of geom that the plot uses. For example, bar charts use bar geoms, line charts use line geoms, boxplots use boxplot geoms, and so on. Scatterplots break the trend; they use the point geom. You can use different geoms to plot the same data. To change the geom in your plot, change the geom function that you add to ggplot(). Let’s look at a few ways of viewing the distribution of annual visitation (visitors) for each park (park_name).
+
+```{r}
+ggplot(data = se) +
+geom_jitter(aes(x = park_name, y = visitors, color = park_name),
+width = 0.1,
+alpha = 0.4) +
+coord_flip() +
+theme(legend.position = "none")
+#alpha : transparent rate
+```
+
+```{r}
+ggplot(se, aes(x = park_name, y = visitors)) +
+geom_boxplot() +
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+```{r}
+ggplot(se, aes(x = year, y = visitors, color = park_name)) +
+geom_line()
+```
+
+geom_smooth allows you to view a smoothed mean of data. Here we look at the smooth mean of visitation over time to Acadia National Park:
+
+```{r}
+ggplot(data = acadia) +
+geom_point(aes(x = year, y = visitors)) +
+geom_line(aes(x = year, y = visitors)) +
+geom_smooth(aes(x = year, y = visitors)) +
+labs(title = "Acadia National Park Visitation",
+y = "Visitation",
+x = "Year") +
+theme_bw()
+```
+
+### Bar chats
+
+```{r}
+png('figures/test.png')
+ggplot(data = visit_16, aes(x = state)) +
+geom_bar()
+dev.off()
+
+pdf('figures/test.pdf')
+ggplot(data = visit_16, aes(x = state)) +
+geom_bar()
+dev.off()
+#图片存成PDF和PNG的形式
+```
+
+
+
+
 

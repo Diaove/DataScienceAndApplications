@@ -1,0 +1,7 @@
+---
+title: "ZYMG_Homework1"
+author: "Zhang YunMengGe_3170105497"
+date: "2020/7/8"
+output: html_document
+---
+

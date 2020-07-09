@@ -13,4 +13,270 @@ output:
 library(tidyverse)
 library(tinytex)
 library(tidyverse)
+library(readr)
+library(dplyr)
+```
+
+
+The data set calif_penn_2011.csv contains information about the housing stock of California and Pennsylvania, as of 2011.  Information as aggregated into "Census tracts", geographic regions of a few thousand people which are supposed to be fairly homogeneous economically and socially.
+
+## 1. Loading and cleaning
+
+### a. Load the data into a dataframe called `ca_pa`.
+    
+```{r}
+#load the data 
+calif_penn<-read_csv("data/calif_penn_2011.csv")
+ca_pa<-as.data.frame(calif_penn)
+#head(ca_pa) #view the datafrme
+```
+### b. How many rows and columns does the dataframe have?
+```{r}
+dim(ca_pa)
+```
+### c. Run this command, and explain, in words, what this does:
+    
+```{r}
+colSums(apply(ca_pa,c(1,2),is.na))
+```
+
+The function of `apply()` is `Retruns a vector or array or list of values obtained by applying a function to margins of an array or matrix`.
+This operation means judging the missing values of the row and column of the dataframe, and finding the sum of the missing values.
+
+### d. The function `na.omit()` takes a dataframe and returns a new dataframe, omitting any row containing an NA value.  Use it to purge the data set of rows with incomplete data.
+
+```{r}
+new_ca_pa<-na.omit(ca_pa)
+#head(new_ca_pa,10)
+```
+
+### e. How many rows did this eliminate?
+```{r}
+n<-nrow(ca_pa)-nrow(new_ca_pa)
+n
+```
+
+### f. Are your answers in (c) and (e) compatible? Explain.
+
+Compatible. `(c)` shows the number of missing values in each column, some of them have missing values at the same position, and the eliminated ones in `(e)` are those with missing values greater than or equal to 1, so they are compatible.
+
+## 2.This Very New House
+
+### a. The variable `Built_2005_or_later` indicates the percentage of houses in each Census tract built since 2005.  Plot median house prices against this variable.
+
+```{r}
+ggplot(data=ca_pa)+
+  geom_point(aes(x =Built_2005_or_later, y =Median_house_value),color="skyblue",alpha=0.3,size=0.3) +
+  labs(x = "Built_2005_or_later",y = "Median_house_value")
+```
+    
+### b. Make a new plot, or pair of plots, which breaks this out by state.  Note that the state is recorded in the `STATEFP` variable, with California being state 6 and Pennsylvania state 42.
+```{r}
+ca_pa_6<-filter(new_ca_pa,STATEFP=="06")
+#ca_pa_6
+ca_pa_42<-filter(new_ca_pa,STATEFP=="42")
+#ca_pa_42
+```
+```{r}
+ggplot(data=ca_pa_6)+
+  geom_point(aes(x =Built_2005_or_later, y =Median_house_value),color="skyblue",alpha=0.6,size=0.3) +
+  labs(x = "Built_2005_or_later",y = "Median_house_value",title = "California")
+```
+
+```{r}
+ggplot(data=ca_pa_42)+
+  geom_point(aes(x =Built_2005_or_later, y =Median_house_value),color="pink",alpha=0.6,size=0.3) +
+  labs(x = "Built_2005_or_later",y = "Median_house_value",title = "Pennsylvania")
+```
+
+## 3.Nobody Home   
+The vacancy rate is the fraction of housing units which are not occupied.  The dataframe contains columns giving the total number of housing units for each Census tract, and the number of vacant housing units.  
+
+### a. Add a new column to the dataframe which contains the vacancy rate.  What are the minimum, maximum, mean, and median vacancy rates?
+```{r}
+attach(new_ca_pa)
+Vacancy_rate<-Vacant_units/Total_units
+new_ca_pa<-cbind(new_ca_pa,Vacancy_rate)
+summary(Vacancy_rate)
+```
+### b. Plot the vacancy rate against median house value.
+```{r}
+ggplot(data=new_ca_pa)+
+  geom_point(aes(x =Vacancy_rate, y =Median_house_value),color="black",alpha=0.8,size=0.5) +
+  labs(x = "Vacancy_rate",y = "Median_house_value")
+```
+### c. Plot vacancy rate against median house value separately for California and for Pennsylvania.  Is there a difference?
+
+```{r}
+ca_pa_6va<-filter(new_ca_pa,STATEFP=="06")
+#ca_pa_6va
+ca_pa_42va<-filter(new_ca_pa,STATEFP=="42")
+#ca_pa_42va
+```
+```{r}
+ggplot(data=ca_pa_6va)+
+  geom_point(aes(x =Vacancy_rate, y =Median_house_value),color="skyblue",alpha=0.6,size=0.5) +
+  labs(x = "Vacancy_rate",y = "Median_house_value",title = "California")
+```
+```{r}
+ggplot(data=ca_pa_42va)+
+  geom_point(aes(x =Vacancy_rate, y =Median_house_value),color="pink",alpha=0.6,size=0.5) +
+  labs(x = "Vacancy_rate",y = "Median_house_value",title = "Pennsylvania")
+```
+In California, the vacancy rate basically does not change with the change in the median house price, while in Pennsylvania, the vacancy rate shows a downward trend as the median house price increases.
+
+    
+## 4. The column `COUNTYFP` contains a numerical code for counties within each state.  We are interested in Alameda County (county 1 in California), Santa Clara (county 85 in California), and Allegheny County (county 3 in Pennsylvania).
+
+### a. Explain what the block of code at the end of this question is supposed to accomplish, and how it does it.
+```{r, eval=FALSE}
+acca <- c()
+for (tract in 1:nrow(ca_pa)) {
+  if (ca_pa$STATEFP[tract] == 6) { #Filter out California
+    if (ca_pa$COUNTYFP[tract] == 1) { #Filter out Alameda County in California
+      acca <- c(acca, tract)  #Generate the number of rows where Alameda County is located
+    }
+  }
+}
+accamhv <- c()
+for (tract in acca) {
+  accamhv <- c(accamhv, ca_pa[tract,10]) #Generate the median house price in Alameda County Median_house_value
+}
+median(accamhv) #Calculate the median of house prices in Alameda County
+```
+### b. Give a single line of R which gives the same final answer as the block of code.  Note: there are at least two ways to do this; you just have to find one.
+```{r}
+median(new_ca_pa[which((STATEFP=="06")&(COUNTYFP=="001")),10])
+```
+
+### c. For Alameda, Santa Clara and Allegheny Counties, what were the average percentages of housing built since 2005?
+```{r}
+ca_pa.1.1<-new_ca_pa[which((STATEFP=="06")&(COUNTYFP=="001")),]
+ca_pa.1.2<-new_ca_pa[which((STATEFP=="06")&(COUNTYFP=="085")),]
+ca_pa.2.1<-new_ca_pa[which((STATEFP=="42")&(COUNTYFP=="003")),]
+mean1=mean(ca_pa.1.1$Built_2005_or_later/ca_pa.1.1$Total_units)
+mean1
+mean2=mean(ca_pa.1.2$Built_2005_or_later/ca_pa.1.2$Total_units)
+mean2
+mean3=mean(ca_pa.2.1$Built_2005_or_later/ca_pa.2.1$Total_units)
+mean3
+```
+
+
+### d. The `cor` function calculates the correlation coefficient between two variables.  What is the correlation between median house value and the percent of housing built since 2005 in 
+
+(i) the whole data 
+```{r}
+cor(Median_house_value,Built_2005_or_later/Total_units)
+```
+(ii) all of California 
+```{r}
+cor(ca_pa_6va$Median_house_value,ca_pa_6va$Built_2005_or_later/ca_pa_6va$Total_units)
+```
+(iii) all of Pennsylvania 
+```{r}
+cor(ca_pa_42va$Median_house_value,ca_pa_42va$Built_2005_or_later/ca_pa_42va$Total_units)
+```
+(iv) Alameda County 
+```{r}
+cor(ca_pa.1.1$Median_house_value,ca_pa.1.1$Built_2005_or_later/ca_pa.1.1$Total_units)
+```
+(v) Santa Clara County
+```{r}
+cor(ca_pa.1.2$Median_house_value,ca_pa.1.2$Built_2005_or_later/ca_pa.1.2$Total_units)
+```
+(vi) Allegheny County
+```{r}
+cor(ca_pa.2.1$Median_house_value,ca_pa.2.1$Built_2005_or_later/ca_pa.2.1$Total_units)
+```
+### e. Make three plots, showing median house values against median income, for Alameda, Santa Clara, and Allegheny Counties.  (If you can fit the information into one plot, clearly distinguishing the three counties, that's OK too.)
+```{r}
+ggplot(data=ca_pa.1.1)+
+  geom_point(aes(x =Median_household_income, y =Median_house_value),color="red",alpha=0.2,size=1) +
+  labs(x = "Median_household_income",y = "Median_house_value",title = "Alameda")
+```
+
+## MB.Ch1.11. Run the following code:
+
+```{r}
+gender <- factor(c(rep("female", 91), rep("male", 92)))
+table(gender)
+```
+
+```{r}
+gender <- factor(gender, levels=c("male", "female"))
+table(gender)
+```
+
+```{r}
+gender <- factor(gender, levels=c("Male", "female"))
+# Note the mistake: "Male" should be "male"
+table(gender)
+```
+
+
+```{r}
+table(gender, exclude=NULL)
+```
+
+
+```{r}
+rm(gender) # Remove gender
+```
+### Explain the output from the successive uses of table().
+`table()` uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels. 
+
+The `Male` factor has no corresponding data, the frequency is zero, and the `male` factor that is not named is counted in `NA`.
+
+## MB.Ch1.12. Write a function that calculates the proportion of values in a vector x that exceed some value cutoff.
+```{r}
+proportion<-function(vector,x){
+  n=length(vector)
+  p=0
+  for (i in 1:n) {
+    if(vector[i]<=x)
+      {
+        p=p+1
+      }
+    else{
+    p=p
+    }
+  }
+  1-p/n
+}
+```
+### (a) Use the sequence of numbers 1, 2, . . . , 100 to check that this function gives the result that is expected.
+```{r}
+a=seq(1:100)
+proportion(a,60)
+```
+## MB.Ch1.18. 
+The Rabbit data frame in the MASS library contains blood pressure change measurements on five rabbits (labeled as R1, R2, . . . ,R5) under various control and treatment conditions. Read the help file for more information. Use the unstack() function (three times) to convert Rabbit to the following form:
+
+Treatment Dose R1 R2 R3 R4 R5
+
+1 Control 6.25 0.50 1.00 0.75 1.25 1.5
+
+2 Control 12.50 4.50 1.25 3.00 1.50 1.5
+
+....
+
+```{r}
+library(MASS)
+RabbitData<-as.data.frame(Rabbit)
+#RabbitData
+```
+
+```{r}
+RabbitDose<-unstack(RabbitData,Dose~Animal)[,1]
+RabbitDose
+RabbitTreatment<-unstack(RabbitData,Treatment~Animal)[,1]
+RabbitTreatment
+RabbitBPchange<-unstack(RabbitData,BPchange~Animal)
+RabbitBPchange
+```
+
+```{r}
+Rabbitform<-data.frame(RabbitTreatment,RabbitDose,RabbitBPchange)
+Rabbitform
 ```

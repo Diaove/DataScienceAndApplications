@@ -15,7 +15,7 @@ library(tinytex)
 
 ```
 
-# Question 1
+## Question 1
 
 The Iowa data set `iowa.csv` is a toy example that summarises the yield of wheat (bushels per acre) for the state of Iowa between 1930-1962. In addition to yield, year, rainfall and temperature were recorded as the main predictors of yield.
 
@@ -56,7 +56,7 @@ iowa.df[5,7]
 iowa.df[2,]
 ```
 
-# Question 2: Syntax and class-typing.
+## Question 2: Syntax and class-typing.
 
 ###  a. For each of the following commands, either explain why they should be errors, or explain the non-erroneous result.
 ```
@@ -101,7 +101,7 @@ list4[2]+list4[4]
 The elements of the first formula are in numerical form and therefore can be added; the elements of the second formula are in the form of a linked list and cannot be added.
 
 
-# Question 3: Working with functions and operators.
+## Question 3: Working with functions and operators.
 
 ### a. The colon operator will create a sequence of integers in order. It is a special case of the function `seq()` which you saw earlier in this assignment. Using the help command `?seq` to learn about the function, design an expression that will give you the sequence of numbers from 1 to 10000 in increments of 372. Design another that will give you a sequence between 1 and 10000 that is exactly 50 numbers in length.
 
@@ -122,7 +122,7 @@ The first three-digit number "1,2,3" is generated and repeated three times as a 
 
 The second produces three digits "1,2,3", where each digit is repeated three times.
 
-# MB.Ch1.2.
+## MB.Ch1.2.
 
 The orings data frame gives data on the damage that had occurred in US space shuttle launches
 prior to the disastrous Challenger launch of 28 January 1986. The observations in rows 1, 2, 4, 11, 13, and 18
@@ -153,7 +153,7 @@ y = "Tatal",
 title = "ORINGS") 
 ```
 
-# MB.Ch1.4. For the data frame ais (DAAG package)
+## MB.Ch1.4. For the data frame ais (DAAG package)
 
 ### (a) Use the function str() to get information on each of the columns. Determine whether any of the columns hold missing values.
 
@@ -186,7 +186,7 @@ From the table `proportion_sport` above, we can find out the porportion of femal
 
 The table `ifimbanlance` tells that if the proportion is imbalance. If yes, it turns out to be `True`, if no it turns out to be `False`.
 
-# MB.Ch1.6.
+##  MB.Ch1.6.
 
 Create a data frame called Manitoba.lakes that contains the lake’s elevation (in meters above sea
 level) and area (in square kilometers) as listed below. Assign the names of the lakes using the row.names()
@@ -221,7 +221,7 @@ text(area ~ elevation, labels=area, pos=2, ylog=T)
 title("Manitoba’s Largest Lakes")
 ```
 
-#MB.Ch1.7. 
+## MB.Ch1.7. 
 
 Look up the help page for the R function dotchart(). Use this function to display the areas of the Manitoba lakes (a) on a linear scale, and (b) on a logarithmic scale. Add, in each case, suitable labeling information.
 
@@ -237,7 +237,7 @@ dotchart(log2(area), labels =row.names(Manitoba.lakes),xlab ="log2(area)", ylab 
 ```
 
 
-# MB.Ch1.8. Using the sum() function, obtain a lower bound for the area of Manitoba covered by water.
+## MB.Ch1.8. Using the sum() function, obtain a lower bound for the area of Manitoba covered by water.
 ```{r}
 sum(area)
 ```

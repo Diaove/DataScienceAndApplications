@@ -1,0 +1,16 @@
+---
+title: "Homework2"
+author: "Zhang YunMengGe_3170105497"
+date: "2020/7/9"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+  html_document: default
+---
+
+```{r setup, message = F, include=FALSE}
+#Call all packages
+library(tidyverse)
+library(tinytex)
+library(tidyverse)
+```

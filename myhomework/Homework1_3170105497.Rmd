@@ -149,8 +149,16 @@ head(neworings)
 ggplot(data = neworings) +
 geom_point(aes(x = Temperature, y = Total)) +
 labs(x = "Temperature",
-y = "Tatal",
+y = "Total",
 title = "ORINGS") 
+```
+
+```{r}
+ggplot(data = oringsdata) +
+geom_point(aes(x = Temperature, y = Total)) +
+labs(x = "Temperature",
+y = "Total",
+title = "FULL ORINGS") 
 ```
 
 ## MB.Ch1.4. For the data frame ais (DAAG package)

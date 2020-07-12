@@ -131,10 +131,10 @@ The first estimate has the lower MSE.
 a. Calculate the mean per-capita GMP across cities, and the standard error of this mean, using the built-in functions `mean()` and `sd()`, and the formula for the standard error of the mean you learned in your intro. stats. class (or looked up on Wikipedia...).
 ```{r}
 mean(gmp$pcgmp)
-sd(gmp$pcgmp)
+sd(gmp$pcgmp)/sqrt(length(gmp$pcgmp))
 ```
 $$
-SD=\sqrt{\frac{\sum^n_{i=1}(X_n-\overline{X})^2}{n-1}}
+SD=\sqrt{\frac{\sum^n_{i=1}(X_i-\overline{X})^2}{n-1}}
 $$
 
 b. Write a function which takes in an integer `i`, and calculate the mean per-capita GMP for every city _except_ city number `i`.
@@ -158,7 +158,7 @@ n=length(gmp$pop)
 var_jackknifed=(n-1)*mean((jackknifed.means-mean(gmp$pcgmp))^2)
 sqrt(var_jackknifed)
 ```
-Compared to part(a) `sd(gmp$pcgmp)=9219.663`,jack-knife approximation to the standard error of the mean is much smaller.
+Compared to part(a) `sd(gmp$pcgmp)=9219.663`,jack-knife approximation to the standard error of the mean is same with (a).
 
 8. Write a function, `plm.jackknife()`, to calculate jackknife standard errors for the parameters $y_0$ and $a$.  It should take the same arguments as `plm()`, and return standard errors for both parameters.  This function should call your `plm()` function repeatedly.  What standard errors do you get for the two parameters?
 
@@ -172,14 +172,8 @@ plm.jackknife<-function(a,N = gmp$pop,Y = gmp$pcgmp){
   }
   y0.means = c()
   aa.means = c()
-  for (i in 1:length(y0)) {
-    y0.means = c(y0.means,mean_i(i,Y=y0))
-  }
-  sd_y0=(n-1)/sqrt(n)*sd(y0.means)
-  for (i in 1:length(aa)) {
-    aa.means = c(aa.means,mean_i(i,Y=aa))
-  }
-  sd_aa=(n-1)/sqrt(n)*sd(aa.means)
+  sd_y0=(n-1)/sqrt(n)*sd(y0)
+  sd_aa=(n-1)/sqrt(n)*sd(aa)
   return(c(sd_y0,sd_aa))
 }
 plm.jackknife(c(6611,0.15),gmp$pop,gmp$pcgmp)
@@ -195,5 +189,17 @@ plm(a,N=gmp_2013$pop,Y=gmp_2013$pcgmp)
 plm.jackknife(a,N = gmp_2013$pop,Y = gmp_2013$pcgmp)
 ```
 
-The `y0_fin=6611` calculated by plm is basically the same as the initial value, `a_fin=0.1433688` is slightly different from the initial value, the standard deviation of `y0` is 3.439384e-11, and the standard deviation of `a` is 2.713581e-06.
+The `y0_fin=6611` calculated by plm is basically the same as the initial value, `a_fin=0.1433688` is slightly different from the initial value, the standard deviation of `y0` is 1.337623e-08, and the standard deviation of `a` is 1.090986e-03.
+
+
+
+
+
+
+
+
+
+
+
+
 

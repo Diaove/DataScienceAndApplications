@@ -1,0 +1,15 @@
+```{r}
+doc_drug<-rep(0,times=2125)
+began_prescribing <- function(i){
+    doctor_i <- ckm_nodes_clean[[i, 2]]
+    if (is.infinite(doctor_i)){ 
+        began_prescribing_idx <- NA
+        }
+    else{
+        began_prescribing_idx <- which(Doctor==i&Month==doctor_i)
+    }
+    return(began_prescribing_idx)
+}
+began_prescribing_list <- na.omit(sapply(seq(1, dim(ckm_nodes_clean)[1]), began_prescribing))
+doc_drug[began_prescribing_list] = 1
+```
